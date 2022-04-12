@@ -1,6 +1,6 @@
 // ===== GLOBAL VARIABLES =====
 
-let playerCredits = 10;
+let playerCredits = 1;
 let playerHand = [];
 let shuffledDeck = [];
 let heldCardsIndex = [];
@@ -14,6 +14,7 @@ let winningCombination = "";
 let canClickDealBtn = true;
 let canClickDrawBtn = false;
 let canClickCreditsBtn = true;
+let canClickHold = false;
 
 const payoutInfo = { 
   "Royal Flush": 250, 
@@ -302,15 +303,18 @@ const createCardElement= () => {
     cardContainer.appendChild(indivCardContainer);
 
     card.addEventListener('click', (event) => {
+      if (canClickHold) {
       toggleHold(event.currentTarget, holdMessage, i);
       canClickDeal = false;
       canClickDraw = true;
+      }
     })
 
   }
 }
 
 drawButton.addEventListener('click', () => {
+  canClickHold = false;
   if (canClickDrawBtn) {
   playerHand = drawCards();
   createCardElement();
@@ -325,7 +329,6 @@ drawButton.addEventListener('click', () => {
     } else {
       displayGameMessage("Insert credits to begin");
     }
- 
   }
 })
 
@@ -352,6 +355,7 @@ dealButton.addEventListener('click', () => {
   displayGameMessage("Select cards to hold and press draw")
   canClickDealBtn = false;
   canClickDrawBtn = true;
+  canClickHold = true;
   }
 })
 
