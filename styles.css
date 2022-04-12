@@ -2,6 +2,7 @@ body {
   background-color: black;
   color: white;
   text-transform: uppercase;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 h1 {
@@ -20,7 +21,31 @@ h1 {
 }
 
 #payout-table-container {
-  background-color: green;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+table {
+  border-collapse: collapse;
+  text-align: center;
+  vertical-align: center;
+  font-size: 10px;
+}
+
+th,
+td {
+  border: 1px solid pink;
+  padding: 5px;
+}
+
+.betCombinations {
+  width: 200px;
+}
+
+.betWinnings {
+  width: 50px;
 }
 
 #game-container {

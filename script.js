@@ -36,6 +36,7 @@ const gameMessage = document.getElementById("game-message");
 const creditsInserted = document.getElementById("credits-inserted");
 const creditsWon = document.getElementById("credits-won");
 const creditsLeft = document.getElementById("credits-left");
+const payoutTableContainer = document.getElementById("payout-table-container");
 
 const addCreditBtn = document.getElementById("addcredit");
 const minusCreditBtn = document.getElementById("minuscredit");
@@ -89,6 +90,57 @@ const resetGame = () => {
   canClickDrawBtn = false;
   canClickCreditsBtn = true;
 
+}
+
+const generatePayoutTable = () => {
+
+  let tableContainer = document.createElement("table");
+  let tableContainerHead = document.createElement("thead");
+  let tableContainerBody = document.createElement("tbody");
+
+  tableContainer.appendChild(tableContainerHead);
+  tableContainer.appendChild(tableContainerBody);
+
+  const tableHeaders = ["Winning Combinations", 1, 2, 3, 4, 5];
+  for (let i = 0; i < tableHeaders.length; i += 1) {
+    let tableHeader = document.createElement("th");
+    tableHeader.innerText = tableHeaders[i];
+    tableContainerHead.append(tableHeader);
+
+    if (i === 0) {
+      tableHeader.classList = "betCombinations";
+    } else {
+      tableHeader.classList = "betWinnings"
+    }
+
+  }
+
+  let payoutInfoKeys = Object.keys(payoutInfo);
+
+
+  for (let i = 0; i < payoutInfoKeys.length; i += 1) {
+    let tableRow = document.createElement("tr");
+
+    for(let j = 0; j < 6; j += 1) {
+      let tableColumn = document.createElement("td");
+      if (j === 0) {
+        tableColumn.innerText = payoutInfoKeys[i];
+        tableColumn.classList = "betCombinations";
+      } else {
+        tableColumn.innerText = payoutInfo[payoutInfoKeys[i]] * j;
+
+        if ( payoutInfoKeys[i] === "Royal Flush" && j === 5) {
+          tableColumn.innerText = 4000;
+        }
+        
+        tableColumn.classList = "betWinnings"
+      }
+      tableRow.appendChild(tableColumn);
+    }
+
+    tableContainerBody.appendChild(tableRow);
+  }
+  payoutTableContainer.appendChild(tableContainer);
 }
 
 // ===== GAME LOGIC =====
@@ -379,3 +431,5 @@ minusCreditBtn.addEventListener('click', () => {
     }
 })
 
+// ====== INIT GAME =====
+generatePayoutTable();
