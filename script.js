@@ -1,6 +1,6 @@
 // ===== GLOBAL VARIABLES =====
 
-let playerCredits = 1;
+let playerCredits = 5;
 let playerHand = [];
 let shuffledDeck = [];
 let heldCardsIndex = [];
@@ -47,13 +47,13 @@ const drawButton = document.getElementById("drawbutton");
 // ===== HELPER FUNCTIONS =====
 
 // display cards on screen
-const displayCards = (cards) => {
+/*const displayCards = (cards) => {
   for (let i = 0; i < cards.length; i += 1) {
     let pngCardName = `${cards[i].name}_of_${cards[i].suit}.png`
     let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
     cardContainer.innerHTML += pngCardSrc;
   }
-}
+}*/
 
 const displayGameMessage = (message) => {
   gameMessage.innerText = message;
@@ -110,8 +110,10 @@ const generatePayoutTable = () => {
     if (i === 0) {
       tableHeader.classList = "betCombinations";
     } else {
-      tableHeader.classList = "betWinnings"
+      tableHeader.classList = "betWinnings";
     }
+
+    tableHeader.classList.add(i);
 
   }
 
@@ -120,6 +122,7 @@ const generatePayoutTable = () => {
 
   for (let i = 0; i < payoutInfoKeys.length; i += 1) {
     let tableRow = document.createElement("tr");
+    tableRow.classList = payoutInfoKeys[i];
 
     for(let j = 0; j < 6; j += 1) {
       let tableColumn = document.createElement("td");
@@ -133,8 +136,9 @@ const generatePayoutTable = () => {
           tableColumn.innerText = 4000;
         }
         
-        tableColumn.classList = "betWinnings"
+        tableColumn.classList = "betWinnings";
       }
+      tableColumn.classList.add(j);
       tableRow.appendChild(tableColumn);
     }
 
@@ -164,6 +168,7 @@ const createDeck = () => {
     
     for (let rankCounter = 1; rankCounter <= 13; rankCounter += 1) {
       let cardName = `${rankCounter}`;
+      let fullCardName = `${rankCounter}`;
 
       if (cardName == 1) {
         cardName = 'A';
@@ -347,7 +352,10 @@ const createCardElement= () => {
     const card = document.createElement('div');
     card.classList.add('card');
 
-    card.innerText = `${playerHand[i].name} ${playerHand[i].symbol}`;
+    //card.innerText = `${playerHand[i].name} ${playerHand[i].symbol}`;
+    let pngCardName = `${playerHand[i].fullname}_of_${playerHand[i].suit}.png`
+    let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
+    card.innerHTML += pngCardSrc;
 
     indivCardContainer.appendChild(holdMessage);
     indivCardContainer.appendChild(card);
@@ -392,7 +400,7 @@ dealButton.addEventListener('click', () => {
      displayGameMessage("Insert credits to begin");
     }
   } else if (canClickDealBtn === true) {
-  winningCombinationDisplay.innerText = "";
+  winningCombinationDisplay.innerText = "Select cards to hold and press draw";
   canClickCreditsBtn = false;
   betPlaced = creditDisplay;
   creditDisplay = 0;
@@ -413,22 +421,31 @@ dealButton.addEventListener('click', () => {
 
 addCreditBtn.addEventListener('click', () => {
 
-    if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
-    creditDisplay += 1;
-    creditsToInsert.innerText = creditDisplay + " credits";
-    } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
-      displayGameMessage("not enough credits");
-    } else if (playerCredits === 0) {
-      displayGameMessage("no credits left")
-    }
+
+  if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
+  creditDisplay += 1;
+  creditsToInsert.innerText = creditDisplay + " credits";
+
+  } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
+    displayGameMessage("not enough credits");
+  } else if (playerCredits === 0) {
+    displayGameMessage("no credits left")
+  }
+
+  /*let payoutTableClassName = "betWinnings " + String(creditDisplay); 
+  console.log(payoutTableClassName);
+  document.querySelector(String(payoutTableClassName)).classList = "amt-bet-table";*/
+
+
+  
 })
 
 minusCreditBtn.addEventListener('click', () => {
-    if (creditDisplay > 0 && canClickCreditsBtn) {
-    creditDisplay -= 1;
-    creditsToInsert.innerText = creditDisplay + " credits";
-    displayGameMessage("insert credits to begin")
-    }
+  if (creditDisplay > 0 && canClickCreditsBtn) {
+  creditDisplay -= 1;
+  creditsToInsert.innerText = creditDisplay + " credits";
+  displayGameMessage("insert credits to begin")
+  }
 })
 
 // ====== INIT GAME =====

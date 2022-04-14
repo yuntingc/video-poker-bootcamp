@@ -11,13 +11,13 @@
       <h1 id="header" class="gradient-text">Video Poker</h1>
       <div id="payout-table-container"></div>
       <div id="game-container">
-        <div id="winning-combination"></div>
-        <div id="card-container" class="card"></div>
+        <div id="winning-combination">Insert credits to begin</div>
+        <div id="card-container"></div>
         <div id="game-message">Insert credits to begin</div>
         <div id="stakes-container">
-          <span id="credits-inserted">credits inserted: 0</span>
-          <span id="credits-won">credits won: 0</span>
-          <span id="credits-left">credits left: 100</span>
+          <div id="credits-inserted">credits inserted: 0</div>
+          <div id="credits-won">credits won: 0</div>
+          <div id="credits-left">credits left: 100</dvi>
         </div>
       </div>
       <div id="button-container">
@@ -26,9 +26,11 @@
           <span id="creditstoinsert">0 credits</span>
           <button id="minuscredit" class="button">-</button>
         </span>
-
-        <button id="dealbutton" class="button">Deal</button>
+        <div class="action-buttons"> 
+          <button id="dealbutton" class="button">Deal</button>
         <button id="drawbutton" class="button">Draw</button>
+      </div>
+       
       </div>
       <!-- Import program logic -->
       <script src="script.js"></script>
