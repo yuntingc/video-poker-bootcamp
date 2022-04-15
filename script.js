@@ -1,6 +1,6 @@
 // ===== GLOBAL VARIABLES =====
 
-let playerCredits = 5;
+let playerCredits = 100;
 let playerHand = [];
 let shuffledDeck = [];
 let heldCardsIndex = [];
@@ -15,6 +15,13 @@ let canClickDealBtn = true;
 let canClickDrawBtn = false;
 let canClickCreditsBtn = true;
 let canClickHold = false;
+let gotRowHighlight = false;
+let gotColumnHighlight = false;
+
+
+let payoutTableRowNum;
+let payoutTableColumnNum;
+let payoutTableColumn;
 
 const payoutInfo = { 
   "Royal Flush": 250, 
@@ -28,6 +35,8 @@ const payoutInfo = {
   "Jacks or Better": 1,
   "All Other": 0
 }
+
+const payoutInfoKeys = Object.keys(payoutInfo);
 
 // Getting DOM elements
 const winningCombinationDisplay = document.getElementById("winning-combination");
@@ -76,6 +85,7 @@ const toggleHold = (card, holdMessage, index) => {
 }
 
 const resetGame = () => {
+
   playerHand = [];
   shuffledDeck = [];
   heldCardsIndex = [];
@@ -97,23 +107,28 @@ const generatePayoutTable = () => {
   let tableContainer = document.createElement("table");
   let tableContainerHead = document.createElement("thead");
   let tableContainerBody = document.createElement("tbody");
+  let theadRow = document.createElement("tr");
 
   tableContainer.appendChild(tableContainerHead);
   tableContainer.appendChild(tableContainerBody);
+  
+  tableContainerHead.appendChild(theadRow);
 
   const tableHeaders = ["Winning Combinations", 1, 2, 3, 4, 5];
   for (let i = 0; i < tableHeaders.length; i += 1) {
     let tableHeader = document.createElement("th");
     tableHeader.innerText = tableHeaders[i];
-    tableContainerHead.append(tableHeader);
+    theadRow.append(tableHeader);
 
     if (i === 0) {
-      tableHeader.classList = "betCombinations";
+      tableHeader.classList.add("betCombinations");
+      //tableHeader.classList.add("betCombinations" + i);
     } else {
-      tableHeader.classList = "betWinnings";
+      tableHeader.classList.add("betWinnings");
+      //tableHeader.classList.add("betCombinations" + i);
     }
 
-    tableHeader.classList.add(i);
+    //tableHeader.classList.add(i);
 
   }
 
@@ -128,7 +143,8 @@ const generatePayoutTable = () => {
       let tableColumn = document.createElement("td");
       if (j === 0) {
         tableColumn.innerText = payoutInfoKeys[i];
-        tableColumn.classList = "betCombinations";
+        tableColumn.classList.add("betCombinations");
+        //tableColumn.classList.add("betCombinations" + j);
       } else {
         tableColumn.innerText = payoutInfo[payoutInfoKeys[i]] * j;
 
@@ -136,9 +152,10 @@ const generatePayoutTable = () => {
           tableColumn.innerText = 4000;
         }
         
-        tableColumn.classList = "betWinnings";
+        tableColumn.classList.add("betWinnings");
+        //tableColumn.classList.add("betWinnings" + j);
       }
-      tableColumn.classList.add(j);
+      //tableColumn.classList.add(j);
       tableRow.appendChild(tableColumn);
     }
 
@@ -146,6 +163,68 @@ const generatePayoutTable = () => {
   }
   payoutTableContainer.appendChild(tableContainer);
 }
+
+// need to remove class afterwards
+const highlightRow = () => {
+  gotRowHighlight = true;
+  payoutTableRowNum = payoutInfoKeys.indexOf(winningCombination) + 1
+  document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.add("amt-bet-table") ;
+
+  //setTimeout( () => {
+    //document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
+    //gotRowHighlight = false;
+  //}, 5000)
+
+}
+
+const highlightAddColumn = () => {
+   //gotColumnHighlight = true;
+  payoutTableColumn = creditDisplay -1 ;
+
+  for (let i = 0; i < 11; i += 1) {
+    let payoutTableColumnNum = i * 5 + payoutTableColumn;
+    document.getElementsByClassName("betWinnings")[payoutTableColumnNum].classList.add("amt-bet-table");
+
+    if (creditDisplay > 1) {
+      let prevPayoutTableColumnNum = payoutTableColumnNum - 1
+      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnNum].classList.remove("amt-bet-table");}
+    }
+}
+
+const highlightMinusColumn = () => {
+  //payoutTableColumn;
+  if (creditDisplay === 0) {
+    payoutTableColumn = 0
+  } else {
+  payoutTableColumn = creditDisplay -1 ;}
+
+  for (let i = 0; i < 11; i += 1) {
+  
+    let payoutTableColumnNum = i * 5 + payoutTableColumn;
+  
+    document.getElementsByClassName("betWinnings")[payoutTableColumnNum].classList.add("amt-bet-table");
+
+    if (creditDisplay < 5) {
+      let prevPayoutTableColumnNum;
+      if (creditDisplay === 0) {
+        prevPayoutTableColumnNum = i * 5 
+        //gotColumnHighlight = false
+      } else {
+        prevPayoutTableColumnNum = payoutTableColumnNum + 1
+      }
+  
+      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnNum].classList.remove("amt-bet-table");}
+    }
+}
+
+const removeColumnHighlight = () => {
+for (let i = 0; i < 11; i += 1) {
+  let z = i * 5 + payoutTableColumn
+  document.getElementsByClassName("betWinnings")[z].classList.remove("amt-bet-table");
+}
+
+}
+
 
 // ===== GAME LOGIC =====
 const createDeck = () => {
@@ -382,6 +461,14 @@ drawButton.addEventListener('click', () => {
   getWinnings(betPlaced);
   displayGameMessage("Game Over");
   displayWinningCombination(winningCombination);
+  highlightRow(); 
+  //setTimeout( () => {
+   
+    //removeColumnHighlight(); 
+    //gotColumnHighlight = false
+    
+
+  //}, 5000)
   resetGame();
   } else {
     if (playerCredits == 0) {
@@ -416,37 +503,93 @@ dealButton.addEventListener('click', () => {
   canClickDealBtn = false;
   canClickDrawBtn = true;
   canClickHold = true;
+
   }
 })
 
 addCreditBtn.addEventListener('click', () => {
 
 
+
+  if (gotRowHighlight) {
+    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
+  }
+
   if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
   creditDisplay += 1;
   creditsToInsert.innerText = creditDisplay + " credits";
-
-  } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
-    displayGameMessage("not enough credits");
-  } else if (playerCredits === 0) {
-    displayGameMessage("no credits left")
+    
+  if (gotColumnHighlight) { // this help to cap column highlight at 5
+    removeColumnHighlight();
+    gotColumnHighlight = false;
   }
 
-  /*let payoutTableClassName = "betWinnings " + String(creditDisplay); 
-  console.log(payoutTableClassName);
-  document.querySelector(String(payoutTableClassName)).classList = "amt-bet-table";*/
+  // for payout table highlight
+    gotColumnHighlight = true;
+    highlightAddColumn();
 
+    } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
+      displayGameMessage("not enough credits");
+    } else if (playerCredits === 0) {
+      displayGameMessage("no credits left")
+    }
 
-  
 })
 
 minusCreditBtn.addEventListener('click', () => {
+
+  if (gotColumnHighlight) {
+    removeColumnHighlight();
+    gotColumnHighlight = false;
+  }
+
   if (creditDisplay > 0 && canClickCreditsBtn) {
   creditDisplay -= 1;
   creditsToInsert.innerText = creditDisplay + " credits";
+
+// for payout table highlight
+    highlightMinusColumn();
+
   displayGameMessage("insert credits to begin")
   }
 })
 
+// == testing==
+const createEmptyCardElement= () => {
+  cardContainer.innerHTML = "";
+
+  for (let i = 0; i < 5; i += 1) {
+
+    const indivCardContainer = document.createElement('div');
+    indivCardContainer.classList.add('indiv-card-container');
+
+    const holdMessage = document.createElement('div');
+    holdMessage.classList.add('hold-message');
+    holdMessage.innerHTML = '';
+    
+    const card = document.createElement('div');
+    card.classList.add('card');
+
+    //card.innerText = `${playerHand[i].name} ${playerHand[i].symbol}`;
+    let pngCardName = "back_of_card.png"
+    let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
+    card.innerHTML += pngCardSrc;
+
+    indivCardContainer.appendChild(holdMessage);
+    indivCardContainer.appendChild(card);
+
+    cardContainer.appendChild(indivCardContainer);
+
+  }
+}
+
 // ====== INIT GAME =====
 generatePayoutTable();
+createEmptyCardElement();
+
+
+
+
+
+
+
