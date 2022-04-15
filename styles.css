@@ -162,3 +162,45 @@ button:hover {
 .betWinnings:nth-of-type(6) {
   background-color: rgb(109, 153, 116);
 }*/
+
+.flipcard {
+  /*background-color: pink;*/
+  border-radius: 1rem;
+  position: relative;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+  width: 100%;
+  height: 100%;
+}
+
+.cardfront {
+  /*background-color: lightblue;*/
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  position: absolute;
+  transform: rotateY(180deg);
+  /*backface-visibility: hidden;*/
+}
+
+.cardback {
+  /*background-color: plum;*/
+  /*border: 1px solid blue;*/
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  position: absolute;
+  backface-visibility: hidden;
+}
+
+.cardback img {
+  border-radius: 0.3rem;
+}
+
+.turncard {
+  transform: rotateY(180deg);
+}
+
+.reversecard {
+  transform: rotateY(180deg);
+}

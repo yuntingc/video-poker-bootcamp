@@ -17,6 +17,8 @@ let canClickCreditsBtn = true;
 let canClickHold = false;
 let gotRowHighlight = false;
 let gotColumnHighlight = false;
+let canFlipCard = true;
+let cardFacingUp = false;
 
 
 let payoutTableRowNum;
@@ -99,7 +101,15 @@ const resetGame = () => {
   canClickDealBtn = true;
   canClickDrawBtn = false;
   canClickCreditsBtn = true;
+  canFlipCard = true;
 
+  /*
+  if (cardFacingUp) {
+    for (let i = 0; i < 5; i += 1) {
+    const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
+    flipCard.classList.remove('turncard');
+     }
+    }*/
 }
 
 const generatePayoutTable = () => {
@@ -168,8 +178,6 @@ const highlightRow = () => {
   gotRowHighlight = true;
   payoutTableRowNum = payoutInfoKeys.indexOf(winningCombination) + 1
   document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.add("amt-bet-table") ;
-
-
 }
 
 const highlightAddColumn = () => {
@@ -410,8 +418,7 @@ const getWinnings = (betPlaced) => {
 }
 
 // ===== DOM FUNCTIONS =====
-
-const createCardElement= () => {
+const createEmptyCardElement= () => {
   cardContainer.innerHTML = "";
 
   for (let i = 0; i < 5; i += 1) {
@@ -426,15 +433,42 @@ const createCardElement= () => {
     const card = document.createElement('div');
     card.classList.add('card');
 
-    //card.innerText = `${playerHand[i].name} ${playerHand[i].symbol}`;
-    let pngCardName = `${playerHand[i].fullname}_of_${playerHand[i].suit}.png`
-    let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
-    card.innerHTML += pngCardSrc;
+    const flipCard = document.createElement('div');
+    flipCard.classList.add('flipcard');
+    
+    const backOfCard = document.createElement('div');
+
+    let pngCardBack = "back_of_card.png"
+    let pngCardBackSrc = "<img src=cards_png/" + pngCardBack + ">"
+    backOfCard.innerHTML += pngCardBackSrc;
+    backOfCard.classList.add('cardback');
+    flipCard.appendChild(backOfCard);
+    card.appendChild(flipCard);
+
+    const frontOfCard = document.createElement('div');
+    frontOfCard.classList.add('cardfront');
+    flipCard.appendChild(frontOfCard);
 
     indivCardContainer.appendChild(holdMessage);
     indivCardContainer.appendChild(card);
 
     cardContainer.appendChild(indivCardContainer);
+
+  }
+}
+
+const createCardElement= () => {
+  
+  for (let i = 0; i < 5; i += 1) {
+
+    const frontOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardfront`);
+    frontOfCard.innerHTML = "";
+ 
+    let pngCardFront = `${playerHand[i].fullname}_of_${playerHand[i].suit}.png`;
+    let pngCardFrontSrc = "<img src=cards_png/" + pngCardFront + ">" ;
+    frontOfCard.innerHTML += pngCardFrontSrc;
+    
+    const card = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card`);
 
     card.addEventListener('click', (event) => {
       if (canClickHold) {
@@ -444,8 +478,10 @@ const createCardElement= () => {
       }
     })
 
-  }
+    }
+
 }
+
 
 drawButton.addEventListener('click', () => {
   canClickHold = false;
@@ -468,6 +504,7 @@ drawButton.addEventListener('click', () => {
 })
 
 dealButton.addEventListener('click', () => {
+
   if (creditDisplay === 0 && canClickDealBtn === true) {
     if (playerCredits === 0) {
       displayGameMessage("no credits left");
@@ -475,6 +512,30 @@ dealButton.addEventListener('click', () => {
      displayGameMessage("Insert credits to begin");
     }
   } else if (canClickDealBtn === true) {
+    
+    /*
+    if (canFlipCard) {
+      for (let i = 0; i < 5; i += 1) {
+      const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
+      flipCard.classList.add('turncard');
+      cardFacingUp = true;
+      }
+    } else if (canFlipCard && cardFacingUp) {
+
+      for (let i = 0; i < 5; i += 1) {
+      const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
+      flipCard.classList.add('turncard');
+      }
+    }*/
+
+
+      for (let i = 0; i < 5; i += 1) {
+        const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
+      flipCard.classList.toggle('turncard');
+    }
+
+
+
   winningCombinationDisplay.innerText = "Select cards to hold and press draw";
   canClickCreditsBtn = false;
   betPlaced = creditDisplay;
@@ -544,42 +605,7 @@ minusCreditBtn.addEventListener('click', () => {
   }
 })
 
-// == testing==
-const createEmptyCardElement= () => {
-  cardContainer.innerHTML = "";
-
-  for (let i = 0; i < 5; i += 1) {
-
-    const indivCardContainer = document.createElement('div');
-    indivCardContainer.classList.add('indiv-card-container');
-
-    const holdMessage = document.createElement('div');
-    holdMessage.classList.add('hold-message');
-    holdMessage.innerHTML = '';
-    
-    const card = document.createElement('div');
-    card.classList.add('card');
-
-    //card.innerText = `${playerHand[i].name} ${playerHand[i].symbol}`;
-    let pngCardName = "back_of_card.png"
-    let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
-    card.innerHTML += pngCardSrc;
-
-    indivCardContainer.appendChild(holdMessage);
-    indivCardContainer.appendChild(card);
-
-    cardContainer.appendChild(indivCardContainer);
-
-  }
-}
 
 // ====== INIT GAME =====
 generatePayoutTable();
 createEmptyCardElement();
-
-
-
-
-
-
-
