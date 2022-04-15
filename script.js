@@ -164,21 +164,16 @@ const generatePayoutTable = () => {
   payoutTableContainer.appendChild(tableContainer);
 }
 
-// need to remove class afterwards
 const highlightRow = () => {
   gotRowHighlight = true;
   payoutTableRowNum = payoutInfoKeys.indexOf(winningCombination) + 1
   document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.add("amt-bet-table") ;
 
-  //setTimeout( () => {
-    //document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
-    //gotRowHighlight = false;
-  //}, 5000)
 
 }
 
 const highlightAddColumn = () => {
-   //gotColumnHighlight = true;
+  
   payoutTableColumn = creditDisplay -1 ;
 
   for (let i = 0; i < 11; i += 1) {
@@ -192,7 +187,7 @@ const highlightAddColumn = () => {
 }
 
 const highlightMinusColumn = () => {
-  //payoutTableColumn;
+  
   if (creditDisplay === 0) {
     payoutTableColumn = 0
   } else {
@@ -208,7 +203,7 @@ const highlightMinusColumn = () => {
       let prevPayoutTableColumnNum;
       if (creditDisplay === 0) {
         prevPayoutTableColumnNum = i * 5 
-        //gotColumnHighlight = false
+    
       } else {
         prevPayoutTableColumnNum = payoutTableColumnNum + 1
       }
@@ -218,10 +213,10 @@ const highlightMinusColumn = () => {
 }
 
 const removeColumnHighlight = () => {
-for (let i = 0; i < 11; i += 1) {
-  let z = i * 5 + payoutTableColumn
-  document.getElementsByClassName("betWinnings")[z].classList.remove("amt-bet-table");
-}
+  for (let i = 0; i < 11; i += 1) {
+    let z = i * 5 + payoutTableColumn
+   document.getElementsByClassName("betWinnings")[z].classList.remove("amt-bet-table");
+  }
 
 }
 
@@ -462,13 +457,6 @@ drawButton.addEventListener('click', () => {
   displayGameMessage("Game Over");
   displayWinningCombination(winningCombination);
   highlightRow(); 
-  //setTimeout( () => {
-   
-    //removeColumnHighlight(); 
-    //gotColumnHighlight = false
-    
-
-  //}, 5000)
   resetGame();
   } else {
     if (playerCredits == 0) {
@@ -509,30 +497,27 @@ dealButton.addEventListener('click', () => {
 
 addCreditBtn.addEventListener('click', () => {
 
-
-
   if (gotRowHighlight) {
     document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
   }
 
   if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
-  creditDisplay += 1;
-  creditsToInsert.innerText = creditDisplay + " credits";
+    creditDisplay += 1;
+    creditsToInsert.innerText = creditDisplay + " credits";
     
-  if (gotColumnHighlight) { // this help to cap column highlight at 5
-    removeColumnHighlight();
-    gotColumnHighlight = false;
-  }
+    if (gotColumnHighlight) { // this help to cap column highlight at 5
+      removeColumnHighlight();
+      gotColumnHighlight = false;
+    }
 
-  // for payout table highlight
     gotColumnHighlight = true;
     highlightAddColumn();
 
-    } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
-      displayGameMessage("not enough credits");
-    } else if (playerCredits === 0) {
-      displayGameMessage("no credits left")
-    }
+  } else if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay === 0) && playerCredits !== 0) {
+    displayGameMessage("not enough credits");
+  } else if (playerCredits === 0) {
+    displayGameMessage("no credits left")
+  }
 
 })
 
@@ -543,14 +528,19 @@ minusCreditBtn.addEventListener('click', () => {
     gotColumnHighlight = false;
   }
 
+  if (gotRowHighlight) {
+    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
+  }
+
   if (creditDisplay > 0 && canClickCreditsBtn) {
-  creditDisplay -= 1;
-  creditsToInsert.innerText = creditDisplay + " credits";
-
-// for payout table highlight
+    creditDisplay -= 1;
+    creditsToInsert.innerText = creditDisplay + " credits";
     highlightMinusColumn();
+    displayGameMessage("insert credits to begin");
+  }
 
-  displayGameMessage("insert credits to begin")
+  if (creditDisplay === 0) {
+    displayGameMessage("insert credits to begin");
   }
 })
 
