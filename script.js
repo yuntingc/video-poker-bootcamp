@@ -19,6 +19,7 @@ let gotRowHighlight = false;
 let gotColumnHighlight = false;
 let canFlipCard = true;
 let cardFacingUp = false;
+let isAudioMuted = true;
 
 
 let payoutTableRowNum;
@@ -49,11 +50,23 @@ const creditsWon = document.getElementById("credits-won");
 const creditsLeft = document.getElementById("credits-left");
 const payoutTableContainer = document.getElementById("payout-table-container");
 
+const audioBtn = document.getElementById("sound-button");
 const addCreditBtn = document.getElementById("addcredit");
 const minusCreditBtn = document.getElementById("minuscredit");
 const creditsToInsert = document.getElementById("creditstoinsert");
 const dealButton = document.getElementById("dealbutton");
 const drawButton = document.getElementById("drawbutton");
+
+const backgroundMusic = new Audio('sounds/background-music.mp3');
+const creditSound = new Audio ('sounds/credits-sound.wav');
+const dealDrawSound = new Audio('sounds/deal-draw.wav');
+const youLostSound = new Audio('sounds/you-lost.wav');
+const youWonSound = new Audio('sounds/you-won.wav');
+
+creditSound.playbackRate = 5;
+
+
+
 
 // ===== HELPER FUNCTIONS =====
 
@@ -79,10 +92,12 @@ const toggleHold = (card, holdMessage, index) => {
   if (holdMessage.innerHTML === '') {
     holdMessage.innerText = 'hold';
     heldCardsIndex.push(index);
+
   } else {
     holdMessage.innerText = "";
     const removeIndex = heldCardsIndex.indexOf(index);
     heldCardsIndex.splice(removeIndex, 1);
+      
   }  
 }
 
@@ -417,7 +432,8 @@ const getWinnings = (betPlaced) => {
   winnings = betPlaced * winningsPerCredit;
   
   if (winnings > 0) {
-    playerCredits += winnings + betPlaced;  
+    playerCredits += winnings + betPlaced; 
+
   }
 
   creditsWon.innerText = "credits won: " + winnings;
@@ -495,12 +511,20 @@ const createCardElement= () => {
 drawButton.addEventListener('click', () => {
   canClickHold = false;
   if (canClickDrawBtn) {
+        dealDrawSound.play();
   playerHand = drawCards();
   createCardElement();
   winningCombination = calcHandScore(playerHand);
   getWinnings(betPlaced);
+  console.log(winningCombination)
+
   displayGameMessage("Game Over");
   displayWinningCombination(winningCombination);
+    if (winningCombination === "All Other") {
+    youLostSound.play();
+  } else {
+    youWonSound.play();
+  }
   highlightRow(); 
   resetGame();
   } else {
@@ -521,6 +545,7 @@ dealButton.addEventListener('click', () => {
      displayGameMessage("Insert credits to begin");
     }
   } else if (canClickDealBtn === true) {
+    dealDrawSound.play();
     
     /*
     if (canFlipCard) {
@@ -539,8 +564,20 @@ dealButton.addEventListener('click', () => {
 
 
       for (let i = 0; i < 5; i += 1) {
+
+             if(cardFacingUp === false) {
+        const backOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardback`)
+        backOfCard.innerHTML = "";
+      }
+
+
         const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
-      flipCard.classList.toggle('turncard');
+        flipCard.classList.toggle('turncard');
+
+        const frontOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardfront`)
+        frontOfCard.classList.toggle("mirrorimage");
+
+  
     }
 
 
@@ -574,6 +611,10 @@ addCreditBtn.addEventListener('click', () => {
   if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
     creditDisplay += 1;
     creditsToInsert.innerText = creditDisplay + " credits";
+
+ 
+    creditSound.play();
+
     
     if (gotColumnHighlight) { // this help to cap column highlight at 5
       removeColumnHighlight();
@@ -606,15 +647,34 @@ minusCreditBtn.addEventListener('click', () => {
     creditDisplay -= 1;
     creditsToInsert.innerText = creditDisplay + " credits";
     highlightMinusColumn();
+     creditSound.play();
     displayGameMessage("insert credits to begin");
   }
+    
 
   if (creditDisplay === 0) {
     displayGameMessage("insert credits to begin");
   }
 })
 
+audioBtn.addEventListener('click', () => {
+  if (isAudioMuted) {
+  backgroundMusic.play();
+  isAudioMuted = false;
+  audioBtn.innerText = '🔈';
+  } else {
+    backgroundMusic.pause();
+    audioBtn.innerText = '🔇'
+    isAudioMuted = true;
+  }
+
+})
+
 
 // ====== INIT GAME =====
 generatePayoutTable();
 createEmptyCardElement();
+
+
+
+
