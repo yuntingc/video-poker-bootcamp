@@ -110,6 +110,13 @@ const resetGame = () => {
     flipCard.classList.remove('turncard');
      }
     }*/
+
+    for (let i = 0; i < 5; i += 1) {
+    const holdMessage = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.hold-message`)
+    holdMessage.innerText = "";
+     }
+
+
 }
 
 const generatePayoutTable = () => {
@@ -469,6 +476,8 @@ const createCardElement= () => {
     frontOfCard.innerHTML += pngCardFrontSrc;
     
     const card = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card`);
+
+    const holdMessage = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.hold-message`);
 
     card.addEventListener('click', (event) => {
       if (canClickHold) {
