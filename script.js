@@ -608,11 +608,7 @@ audioBtn.addEventListener('click', () => {
   }
 })
 
-
 // ====== INIT GAME =====
 generatePayoutTable();
 createEmptyCardElement();
-
-
-
 
