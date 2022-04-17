@@ -1,5 +1,4 @@
 body {
-  /*background-color: rgb(97, 86, 86);*/
   background-color: cadetblue;
   color: white;
   display: flex;
@@ -48,7 +47,6 @@ table {
 }
 
 thead {
-  /*background-color: rgb(130, 86, 86);*/
   background-color: rgb(152, 122, 101);
 }
 
@@ -68,8 +66,8 @@ th {
 #game-container {
   display: flex;
   flex-direction: column;
-  width: 55rem; /*55rem*/
-  height: 25rem; /*25rem*/
+  width: 55rem;
+  height: 25rem;
   padding: 0.5rem 1.5rem 0.5rem 1.5rem;
   justify-content: space-evenly;
   border: 0.2rem solid #81b3ae;
@@ -90,7 +88,7 @@ th {
 
 .indiv-card-container {
   width: 100%;
-  height: 15rem; /*15rem*/
+  height: 15rem;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -107,18 +105,7 @@ th {
   width: 5rem;
 }
 
-.hold-message-empty {
-  height: 1.5rem;
-  font-size: 1rem;
-  padding-bottom: 0.2rem;
-  background-color: rgba(231, 180, 180, 0.5);
-  border-radius: 4.5rem;
-  margin: 0.5rem;
-  width: 5rem;
-}
-
 .card {
-  /*border: 1px solid black;*/
   display: flex;
   justify-content: center;
   width: 100%;
@@ -126,7 +113,7 @@ th {
 }
 
 .card img {
-  height: 12.5rem; /*12.5rem*/
+  height: 12.5rem;
 }
 
 #game-message {
@@ -172,13 +159,7 @@ th {
   font-size: 0.8rem;
 }
 
-.finalwinningcombination {
-  background-color: rgba(191, 230, 226);
-  /*color: black;*/
-}
-
-.amt-bet-table {
-  /*background-color: rgba(80, 159, 173);*/
+.highlight-table {
   background-color: rgb(183, 173, 136);
 }
 
@@ -186,13 +167,7 @@ button:hover {
   background-color: rgb(198, 201, 204);
 }
 
-/*
-.betWinnings:nth-of-type(6) {
-  background-color: rgb(109, 153, 116);
-}*/
-
 .flipcard {
-  /*background-color: pink;*/
   border-radius: 1rem;
   position: relative;
   transition: transform 1s;
@@ -202,18 +177,13 @@ button:hover {
 }
 
 .cardfront {
-  /*background-color: lightblue;*/
   width: 100%;
   height: 100%;
   border-radius: 1rem;
   position: absolute;
-  /*transform: rotateY(180deg);*/
-  /*backface-visibility: hidden;*/
 }
 
 .cardback {
-  /*background-color: plum;*/
-  /*border: 1px solid blue;*/
   width: 100%;
   height: 100%;
   border-radius: 1rem;
@@ -233,13 +203,8 @@ button:hover {
   transform: rotateY(180deg);
 }
 
-.reversecard {
-  transform: rotateY(180deg);
-}
-
 @media screen and (max-width: 850px) {
   body {
-    /*background-color: darkgoldenrod;*/
     background-color: cadetblue;
   }
 

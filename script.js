@@ -21,10 +21,9 @@ let canFlipCard = true;
 let cardFacingUp = false;
 let isAudioMuted = true;
 
-
 let payoutTableRowNum;
+let payoutTableColumnCells;
 let payoutTableColumnNum;
-let payoutTableColumn;
 
 const payoutInfo = { 
   "Royal Flush": 250, 
@@ -65,19 +64,7 @@ const youWonSound = new Audio('sounds/you-won.wav');
 
 creditSound.playbackRate = 5;
 
-
-
-
 // ===== HELPER FUNCTIONS =====
-
-// display cards on screen
-/*const displayCards = (cards) => {
-  for (let i = 0; i < cards.length; i += 1) {
-    let pngCardName = `${cards[i].name}_of_${cards[i].suit}.png`
-    let pngCardSrc = "<img src=cards_png/" + pngCardName + ">"
-    cardContainer.innerHTML += pngCardSrc;
-  }
-}*/
 
 const displayGameMessage = (message) => {
   gameMessage.innerText = message;
@@ -97,7 +84,7 @@ const toggleHold = (card, holdMessage, index) => {
     holdMessage.innerText = "";
     const removeIndex = heldCardsIndex.indexOf(index);
     heldCardsIndex.splice(removeIndex, 1);
-      
+
   }  
 }
 
@@ -118,19 +105,10 @@ const resetGame = () => {
   canClickCreditsBtn = true;
   canFlipCard = true;
 
-  /*
-  if (cardFacingUp) {
-    for (let i = 0; i < 5; i += 1) {
-    const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
-    flipCard.classList.remove('turncard');
-     }
-    }*/
-
-    for (let i = 0; i < 5; i += 1) {
-    const holdMessage = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.hold-message`)
-    holdMessage.innerText = "";
-     }
-
+  for (let i = 0; i < 5; i += 1) {
+  const holdMessage = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.hold-message`)
+  holdMessage.innerText = "";
+  }
 
 }
 
@@ -140,12 +118,7 @@ const generatePayoutTable = () => {
   let tableContainerHead = document.createElement("thead");
   let tableContainerBody = document.createElement("tbody");
   let theadRow = document.createElement("tr");
-
-  tableContainer.appendChild(tableContainerHead);
-  tableContainer.appendChild(tableContainerBody);
   
-  tableContainerHead.appendChild(theadRow);
-
   const tableHeaders = ["Winning Combinations", 1, 2, 3, 4, 5];
   for (let i = 0; i < tableHeaders.length; i += 1) {
     let tableHeader = document.createElement("th");
@@ -154,19 +127,14 @@ const generatePayoutTable = () => {
 
     if (i === 0) {
       tableHeader.classList.add("betCombinations");
-      //tableHeader.classList.add("betCombinations" + i);
     } else {
       tableHeader.classList.add("betWinnings");
-      //tableHeader.classList.add("betCombinations" + i);
     }
-
-    //tableHeader.classList.add(i);
-
   }
 
-  let payoutInfoKeys = Object.keys(payoutInfo);
-
-
+  tableContainerHead.appendChild(theadRow);
+  tableContainer.appendChild(tableContainerHead);
+ 
   for (let i = 0; i < payoutInfoKeys.length; i += 1) {
     let tableRow = document.createElement("tr");
     tableRow.classList = payoutInfoKeys[i];
@@ -176,22 +144,21 @@ const generatePayoutTable = () => {
       if (j === 0) {
         tableColumn.innerText = payoutInfoKeys[i];
         tableColumn.classList.add("betCombinations");
-        //tableColumn.classList.add("betCombinations" + j);
       } else {
         tableColumn.innerText = payoutInfo[payoutInfoKeys[i]] * j;
 
         if ( payoutInfoKeys[i] === "Royal Flush" && j === 5) {
           tableColumn.innerText = 4000;
         }
-        
-        tableColumn.classList.add("betWinnings");
-        //tableColumn.classList.add("betWinnings" + j);
+  
+        tableColumn.classList.add("betWinnings");  
       }
-      //tableColumn.classList.add(j);
+
       tableRow.appendChild(tableColumn);
     }
 
     tableContainerBody.appendChild(tableRow);
+    tableContainer.appendChild(tableContainerBody);
   }
   payoutTableContainer.appendChild(tableContainer);
 }
@@ -199,57 +166,54 @@ const generatePayoutTable = () => {
 const highlightRow = () => {
   gotRowHighlight = true;
   payoutTableRowNum = payoutInfoKeys.indexOf(winningCombination) + 1
-  document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.add("amt-bet-table") ;
+  document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.add("highlight-table") ;
 }
 
 const highlightAddColumn = () => {
   
-  payoutTableColumn = creditDisplay -1 ;
+  payoutTableColumnNum = creditDisplay -1 ;
 
   for (let i = 0; i < 11; i += 1) {
-    let payoutTableColumnNum = i * 5 + payoutTableColumn;
-    document.getElementsByClassName("betWinnings")[payoutTableColumnNum].classList.add("amt-bet-table");
+    let payoutTableColumnCells = i * 5 + payoutTableColumnNum;
+    document.getElementsByClassName("betWinnings")[payoutTableColumnCells].classList.add("highlight-table");
 
     if (creditDisplay > 1) {
-      let prevPayoutTableColumnNum = payoutTableColumnNum - 1
-      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnNum].classList.remove("amt-bet-table");}
+      let prevPayoutTableColumnCells = payoutTableColumnCells - 1
+      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnCells].classList.remove("highlight-table");}
     }
 }
 
 const highlightMinusColumn = () => {
   
   if (creditDisplay === 0) {
-    payoutTableColumn = 0
+    payoutTableColumnNum = 0
   } else {
-  payoutTableColumn = creditDisplay -1 ;}
+  payoutTableColumnNum = creditDisplay -1 ;}
 
   for (let i = 0; i < 11; i += 1) {
   
-    let payoutTableColumnNum = i * 5 + payoutTableColumn;
+    let payoutTableColumnCells = i * 5 + payoutTableColumnNum;
   
-    document.getElementsByClassName("betWinnings")[payoutTableColumnNum].classList.add("amt-bet-table");
+    document.getElementsByClassName("betWinnings")[payoutTableColumnCells].classList.add("highlight-table");
 
     if (creditDisplay < 5) {
-      let prevPayoutTableColumnNum;
+      let prevPayoutTableColumnCells;
       if (creditDisplay === 0) {
-        prevPayoutTableColumnNum = i * 5 
-    
+        prevPayoutTableColumnCells = i * 5 
       } else {
-        prevPayoutTableColumnNum = payoutTableColumnNum + 1
+        prevPayoutTableColumnCells = payoutTableColumnCells + 1
       }
   
-      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnNum].classList.remove("amt-bet-table");}
+      document.getElementsByClassName("betWinnings")[prevPayoutTableColumnCells].classList.remove("highlight-table");}
     }
 }
 
 const removeColumnHighlight = () => {
   for (let i = 0; i < 11; i += 1) {
-    let z = i * 5 + payoutTableColumn
-   document.getElementsByClassName("betWinnings")[z].classList.remove("amt-bet-table");
+    let z = i * 5 + payoutTableColumnNum
+   document.getElementsByClassName("betWinnings")[z].classList.remove("highlight-table");
   }
-
 }
-
 
 // ===== GAME LOGIC =====
 const createDeck = () => {
@@ -433,7 +397,6 @@ const getWinnings = (betPlaced) => {
   
   if (winnings > 0) {
     playerCredits += winnings + betPlaced; 
-
   }
 
   creditsWon.innerText = "credits won: " + winnings;
@@ -476,7 +439,6 @@ const createEmptyCardElement= () => {
     indivCardContainer.appendChild(card);
 
     cardContainer.appendChild(indivCardContainer);
-
   }
 }
 
@@ -502,31 +464,31 @@ const createCardElement= () => {
       canClickDraw = true;
       }
     })
-
-    }
-
+  }
 }
-
 
 drawButton.addEventListener('click', () => {
   canClickHold = false;
   if (canClickDrawBtn) {
-        dealDrawSound.play();
-  playerHand = drawCards();
-  createCardElement();
-  winningCombination = calcHandScore(playerHand);
-  getWinnings(betPlaced);
-  console.log(winningCombination)
+    dealDrawSound.play();
+    playerHand = drawCards();
+    createCardElement();
+    winningCombination = calcHandScore(playerHand);
+    getWinnings(betPlaced);
+    console.log(winningCombination)
 
-  displayGameMessage("Game Over");
-  displayWinningCombination(winningCombination);
+    displayGameMessage("Game Over");
+    displayWinningCombination(winningCombination);
+
     if (winningCombination === "All Other") {
-    youLostSound.play();
-  } else {
-    youWonSound.play();
-  }
-  highlightRow(); 
-  resetGame();
+      youLostSound.play();
+    } else {
+      youWonSound.play();
+    }
+
+    highlightRow(); 
+    resetGame();
+    
   } else {
     if (playerCredits == 0) {
       displayGameMessage("no credits left");
@@ -545,59 +507,38 @@ dealButton.addEventListener('click', () => {
      displayGameMessage("Insert credits to begin");
     }
   } else if (canClickDealBtn === true) {
-    dealDrawSound.play();
-    
-    /*
-    if (canFlipCard) {
-      for (let i = 0; i < 5; i += 1) {
-      const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
-      flipCard.classList.add('turncard');
-      cardFacingUp = true;
-      }
-    } else if (canFlipCard && cardFacingUp) {
-
-      for (let i = 0; i < 5; i += 1) {
-      const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
-      flipCard.classList.add('turncard');
-      }
-    }*/
-
+      dealDrawSound.play();
 
       for (let i = 0; i < 5; i += 1) {
 
-             if(cardFacingUp === false) {
-        const backOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardback`)
-        backOfCard.innerHTML = "";
-      }
-
+        if(cardFacingUp === false) {
+          const backOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardback`)
+          backOfCard.innerHTML = "";
+        }
 
         const flipCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div`)
         flipCard.classList.toggle('turncard');
 
         const frontOfCard = document.querySelector(`#card-container > div:nth-child(${i+1}) > div.card > div > div.cardfront`)
         frontOfCard.classList.toggle("mirrorimage");
-
-  
     }
 
+      winningCombinationDisplay.innerText = "Select cards to hold and press draw";
+      canClickCreditsBtn = false;
+      betPlaced = creditDisplay;
+      creditDisplay = 0;
+      playerCredits -= betPlaced;
 
+      creditsToInsert.innerText = creditDisplay + " credits"
+      creditsInserted.innerText = "credits inserted: " + betPlaced;
+      creditsLeft.innerText = "credits left: " + playerCredits;
 
-  winningCombinationDisplay.innerText = "Select cards to hold and press draw";
-  canClickCreditsBtn = false;
-  betPlaced = creditDisplay;
-  creditDisplay = 0;
-  playerCredits -= betPlaced;
-
-  creditsToInsert.innerText = creditDisplay + " credits"
-  creditsInserted.innerText = "credits inserted: " + betPlaced;
-  creditsLeft.innerText = "credits left: " + playerCredits;
-
-  dealCards();
-  createCardElement();
-  displayGameMessage("Select cards to hold and press draw")
-  canClickDealBtn = false;
-  canClickDrawBtn = true;
-  canClickHold = true;
+      dealCards();
+      createCardElement();
+      displayGameMessage("Select cards to hold and press draw")
+      canClickDealBtn = false;
+      canClickDrawBtn = true;
+      canClickHold = true;
 
   }
 })
@@ -605,16 +546,14 @@ dealButton.addEventListener('click', () => {
 addCreditBtn.addEventListener('click', () => {
 
   if (gotRowHighlight) {
-    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
+    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("highlight-table");
   }
 
   if (creditDisplay < 5 && canClickCreditsBtn && (playerCredits-creditDisplay > 0)) {
     creditDisplay += 1;
     creditsToInsert.innerText = creditDisplay + " credits";
 
- 
     creditSound.play();
-
     
     if (gotColumnHighlight) { // this help to cap column highlight at 5
       removeColumnHighlight();
@@ -640,17 +579,16 @@ minusCreditBtn.addEventListener('click', () => {
   }
 
   if (gotRowHighlight) {
-    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("amt-bet-table");
+    document.querySelector(`#payout-table-container > table > tbody > tr:nth-child(${payoutTableRowNum})`).classList.remove("highlight-table");
   }
 
   if (creditDisplay > 0 && canClickCreditsBtn) {
     creditDisplay -= 1;
     creditsToInsert.innerText = creditDisplay + " credits";
     highlightMinusColumn();
-     creditSound.play();
+    creditSound.play();
     displayGameMessage("insert credits to begin");
   }
-    
 
   if (creditDisplay === 0) {
     displayGameMessage("insert credits to begin");
@@ -658,6 +596,7 @@ minusCreditBtn.addEventListener('click', () => {
 })
 
 audioBtn.addEventListener('click', () => {
+
   if (isAudioMuted) {
   backgroundMusic.play();
   isAudioMuted = false;
@@ -667,7 +606,6 @@ audioBtn.addEventListener('click', () => {
     audioBtn.innerText = '🔇'
     isAudioMuted = true;
   }
-
 })
 
 
