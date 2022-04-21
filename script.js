@@ -1,5 +1,7 @@
 // ===== GLOBAL VARIABLES =====
 
+document.querySelector("#payout-table-container > table > tbody > tr.Straight.Flush > td:nth-child(6)")
+
 let playerCredits = 100;
 let playerHand = [];
 let shuffledDeck = [];
